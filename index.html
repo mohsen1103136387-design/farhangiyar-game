@@ -2,318 +2,339 @@
 <html lang="fa">
 <head>
     <meta charset="UTF-8">
-    <title>بازی دانشمندان کوچک – نسخه حرفه‌ای</title>
+    <title>بازی دانشمندان کوچک – نسخه موبایلی جذاب</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: "Tahoma", sans-serif;
             direction: rtl;
-            background: linear-gradient(135deg, #84fab0, #8fd3f4);
             margin: 0;
             padding: 0;
+            background: linear-gradient(135deg, #84fab0, #8fd3f4);
         }
-
         #app {
-            max-width: 1000px;
-            margin: 20px auto;
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
             background: #ffffffee;
-            border-radius: 25px;
-            box-shadow: 0 0 25px rgba(0,0,0,0.25);
-            padding: 20px 20px 30px;
-            position: relative;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-top: 10px;
-        }
-
-        .characters {
+            border-radius: 0;
+            box-shadow: 0 0 25px rgba(0,0,0,0.2);
             display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin: 20px 0;
-            gap: 10px;
+            flex-direction: column;
+        }
+        header {
+            padding: 12px;
+            text-align: center;
+            background: linear-gradient(90deg, #ffb74d, #ff8a65);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+        header p {
+            margin: 4px 0 0;
+            font-size: 13px;
         }
 
-        .char-card {
+        main {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+        }
+
+        /* صفحه ورود */
+        #introScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - 80px);
+            animation: fadeIn 0.8s ease-out;
+        }
+        #introCard {
             background: #fce4ec;
-            border-radius: 15px;
-            padding: 10px;
-            flex: 1 1 30%;
-            min-width: 200px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+            border-radius: 20px;
+            padding: 16px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            text-align: center;
+            animation: floatCard 3s ease-in-out infinite;
+        }
+        #introCard h2 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+        #introCard p {
+            font-size: 13px;
+            margin: 6px 0;
+        }
+        .input-group {
+            margin-top: 10px;
+            text-align: right;
+        }
+        .input-group label {
+            font-size: 13px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            margin-top: 4px;
+            font-size: 14px;
+        }
+        .btn {
+            background: #ff9800;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 14px;
             cursor: pointer;
+            margin-top: 10px;
+            color: #fff;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        .char-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0,0,0,0.25);
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.25);
         }
 
-        .char-name {
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 5px;
+        /* انتخاب شخصیت و اتاق‌ها */
+        #gameScreen {
+            display: none;
+            animation: fadeIn 0.8s ease-out;
         }
-
-        .char-desc {
-            font-size: 14px;
-            color: #555;
-        }
-
         #statusBar {
+            background: #e3f2fd;
+            border-radius: 15px;
+            padding: 8px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #e3f2fd;
-            padding: 10px 15px;
-            border-radius: 15px;
-            margin: 10px 0 15px;
-            flex-wrap: wrap;
-            gap: 10px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        #statusBar span {
+            font-weight: bold;
         }
 
         #rooms {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            margin-top: 10px;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
         }
-
         .room-card {
             background: #fff3e0;
             border-radius: 15px;
-            padding: 15px;
-            flex: 1 1 45%;
-            min-width: 220px;
-            margin-bottom: 10px;
+            padding: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             cursor: pointer;
             position: relative;
-            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
         }
-
         .room-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+        }
+        .room-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .room-desc {
+            font-size: 11px;
+            color: #555;
+        }
+        .room-icon {
+            position: absolute;
+            bottom: -8px;
+            right: -8px;
+            font-size: 28px;
+            opacity: 0.2;
         }
 
-        .room-title {
+        /* فضای سؤال‌ها */
+        #gameArea {
+            background: #f5f5f5;
+            border-radius: 15px;
+            padding: 10px;
+            min-height: 180px;
+        }
+        #roomTitle {
+            font-size: 15px;
             font-weight: bold;
-            font-size: 18px;
+            margin-bottom: 6px;
+        }
+        #questionBox {
+            font-size: 14px;
             margin-bottom: 8px;
         }
-
-        .room-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            color: #fff;
-        }
-
-        .room-locked {
-            background: #ff5252;
-        }
-
-        .room-open {
-            background: #4caf50;
-        }
-
-        .room-done {
-            background: #2196f3;
-        }
-
-        #gameArea {
-            margin-top: 15px;
-            background: #f5f5f5;
-            border-radius: 20px;
-            padding: 15px;
-            min-height: 220px;
-        }
-
-        .question {
-            font-size: 17px;
-            margin-bottom: 10px;
-        }
-
-        .answers {
+        #answersBox {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
         }
-
         .answer-btn {
             background: #fff;
             border: 2px solid #ff9800;
             border-radius: 10px;
-            padding: 8px 12px;
+            padding: 6px 10px;
+            font-size: 12px;
             cursor: pointer;
-            font-size: 14px;
             transition: background 0.2s, transform 0.2s;
         }
-
         .answer-btn:hover {
             background: #ffe0b2;
             transform: scale(1.03);
         }
-
         #message {
-            margin-top: 10px;
-            font-size: 15px;
+            margin-top: 6px;
+            font-size: 12px;
         }
-
         #explanation {
-            margin-top: 8px;
-            font-size: 14px;
+            margin-top: 4px;
+            font-size: 11px;
             color: #555;
         }
-
         #finalTitle {
-            text-align: center;
-            font-size: 20px;
-            margin-top: 15px;
-            color: #2e7d32;
+            margin-top: 8px;
+            font-size: 13px;
             font-weight: bold;
+            color: #2e7d32;
+            text-align: center;
         }
 
         #controls {
-            margin-top: 10px;
+            margin-top: 8px;
             display: flex;
             justify-content: space-between;
+            gap: 6px;
             flex-wrap: wrap;
-            gap: 10px;
         }
-
-        button {
-            background: #ff9800;
-            border: none;
-            padding: 8px 16px;
+        #controls .btn-small {
+            padding: 6px 10px;
+            font-size: 11px;
             border-radius: 10px;
-            font-size: 14px;
-            cursor: pointer;
         }
-
-        button:hover {
-            background: #f57c00;
-        }
-
         #musicToggle {
             background: #2196f3;
-            color: #fff;
         }
-
         #restartBtn {
             background: #e91e63;
-            color: #fff;
+        }
+        #nextBtn {
+            background: #8bc34a;
         }
 
-        #savedInfo {
-            font-size: 13px;
-            color: #555;
-            margin-top: 5px;
+        /* انیمیشن‌ها */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        @media (max-width: 600px) {
-            #app {
-                margin: 10px;
-                padding: 15px;
-            }
-            .room-card {
-                flex: 1 1 100%;
-            }
-            .char-card {
-                flex: 1 1 100%;
-            }
-            #statusBar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floatCard {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <h1>🎮 بازی دانشمندان کوچک – آزمایشگاه حرفه‌ای</h1>
-    <div id="savedInfo"></div>
+    <header>
+        <h1>بازی دانشمندان کوچک</h1>
+        <p>آزمایشگاه رنگی علوم چهارم – مناسب موبایل 📱</p>
+    </header>
 
-    <!-- انتخاب شخصیت -->
-    <div id="characterSelect">
-        <h3>یک دانشمند کوچک انتخاب کن:</h3>
-        <div class="characters">
-            <div class="char-card" onclick="selectCharacter('نیلو')">
-                <div class="char-name">نیلو 🌸</div>
-                <div class="char-desc">باهوش، دقیق، عاشق نور و رنگ‌ها</div>
+    <main>
+        <!-- صفحه ورود نام و شروع -->
+        <section id="introScreen">
+            <div id="introCard">
+                <h2>🎓 خوش آمدی به آزمایشگاه!</h2>
+                <p>اینجا می‌تونی مثل یک دانشمند کوچک، آزمایش‌های علوم چهارم رو بازی کنی.</p>
+                <p>اول اسم خودت رو بنویس تا بازی تو رو بشناسه:</p>
+                <div class="input-group">
+                    <label for="playerName">نام دانشمند کوچک:</label>
+                    <input type="text" id="playerName" placeholder="مثلاً: علی، نیلو، آراد...">
+                </div>
+                <div class="input-group">
+                    <label for="characterSelect">شخصیت مورد علاقه‌ات:</label>
+                    <select id="characterSelectInput" style="width:100%; padding:6px; border-radius:10px; border:1px solid #ccc; margin-top:4px; font-size:13px;">
+                        <option value="نیلو 🌸">نیلو 🌸 (نور و رنگ‌ها)</option>
+                        <option value="آراد 🚀">آراد 🚀 (آزمایش‌های هیجان‌انگیز)</option>
+                        <option value="استاد نورا 🧪">استاد نورا 🧪 (راهنمای مهربان)</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="startGame()">شروع بازی ▶️</button>
+                <p style="font-size:11px; margin-top:8px; color:#555;">
+                    موسیقی آموزشی آرام بعد از شروع بازی فعال می‌شود. اگر خواستی می‌تونی خاموشش کنی.
+                </p>
             </div>
-            <div class="char-card" onclick="selectCharacter('آراد')">
-                <div class="char-name">آراد 🚀</div>
-                <div class="char-desc">پر انرژی، سریع، عاشق آزمایش‌های هیجان‌انگیز</div>
+        </section>
+
+        <!-- صفحه اصلی بازی -->
+        <section id="gameScreen">
+            <div id="statusBar">
+                <div>دانشمند: <span id="statusName"></span></div>
+                <div>شخصیت: <span id="statusChar"></span></div>
+                <div>امتیاز: <span id="statusScore">0</span></div>
             </div>
-            <div class="char-card" onclick="selectCharacter('استاد نورا')">
-                <div class="char-name">استاد نورا 🧪</div>
-                <div class="char-desc">دانشمند مهربان، راهنمای همه‌ی بچه‌ها</div>
+
+            <div id="rooms">
+                <div class="room-card" onclick="enterRoom('light')">
+                    <div class="room-title">اتاق نور و سایه‌ها 💡</div>
+                    <div class="room-desc">آزمایش‌های مربوط به نور، سایه و فاصله از منبع نور.</div>
+                    <div class="room-icon">💡</div>
+                </div>
+                <div class="room-card" onclick="enterRoom('mix')">
+                    <div class="room-title">اتاق مخلوط‌ها و محلول‌ها 🧂</div>
+                    <div class="room-desc">تشخیص مخلوط و محلول، رفتار ذرات در آب.</div>
+                    <div class="room-icon">🧪</div>
+                </div>
+                <div class="room-card" onclick="enterRoom('plant')">
+                    <div class="room-title">اتاق گیاهان و رشد 🌱</div>
+                    <div class="room-desc">شرایط رشد گیاه: نور، آب و خاک مناسب.</div>
+                    <div class="room-icon">🌱</div>
+                </div>
+                <div class="room-card" onclick="enterRoom('magnet')">
+                    <div class="room-title">اتاق آهن‌ربا و اجسام 🧲</div>
+                    <div class="room-desc">تشخیص اجسام آهن‌ربایی و ساخت پل مغناطیسی.</div>
+                    <div class="room-icon">🧲</div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <!-- نوار وضعیت -->
-    <div id="statusBar" style="display:none;">
-        <div>شخصیت: <span id="statusChar"></span></div>
-        <div>امتیاز: <span id="statusScore">0</span></div>
-        <div>مرحله: <span id="statusLevel">1</span></div>
-    </div>
+            <div id="gameArea">
+                <div id="roomTitle"></div>
+                <div id="questionBox"></div>
+                <div id="answersBox"></div>
+                <div id="message"></div>
+                <div id="explanation"></div>
+                <div id="finalTitle"></div>
 
-    <!-- اتاق‌ها -->
-    <div id="rooms" style="display:none;">
-        <div class="room-card" onclick="enterRoom('light')" id="room-light">
-            <div class="room-title">اتاق نور و سایه‌ها 💡</div>
-            <span class="room-badge room-open" id="badge-light">باز</span>
-            <p>آزمایش‌های مربوط به نور، سایه و فاصله از منبع نور.</p>
-        </div>
-
-        <div class="room-card" onclick="enterRoom('mix')" id="room-mix">
-            <div class="room-title">اتاق مخلوط‌ها و محلول‌ها 🧂</div>
-            <span class="room-badge room-locked" id="badge-mix">قفل</span>
-            <p>تشخیص مخلوط و محلول، و رفتار ذرات در آب.</p>
-        </div>
-
-        <div class="room-card" onclick="enterRoom('plant')" id="room-plant">
-            <div class="room-title">اتاق گیاهان و رشد 🌱</div>
-            <span class="room-badge room-locked" id="badge-plant">قفل</span>
-            <p>شرایط رشد گیاه: نور، آب و خاک مناسب.</p>
-        </div>
-
-        <div class="room-card" onclick="enterRoom('magnet')" id="room-magnet">
-            <div class="room-title">اتاق آهن‌ربا و اجسام 🧲</div>
-            <span class="room-badge room-locked" id="badge-magnet">قفل</span>
-            <p>تشخیص اجسام آهن‌ربایی و ساخت پل مغناطیسی.</p>
-        </div>
-    </div>
-
-    <!-- فضای بازی -->
-    <div id="gameArea" style="display:none;">
-        <div id="roomTitle"></div>
-        <div id="questionBox" class="question"></div>
-        <div id="answersBox" class="answers"></div>
-        <div id="message"></div>
-        <div id="explanation"></div>
-        <div id="finalTitle"></div>
-
-        <div id="controls">
-            <button id="nextBtn" style="display:none;" onclick="nextQuestion()">سؤال بعدی ▶️</button>
-            <button id="musicToggle" onclick="toggleMusic()">🎵 موسیقی: خاموش</button>
-            <button id="restartBtn" onclick="restartGame()">🔄 شروع دوباره</button>
-        </div>
-    </div>
+                <div id="controls">
+                    <button id="nextBtn" class="btn btn-small" style="display:none;" onclick="nextQuestion()">سؤال بعدی ▶️</button>
+                    <button id="musicToggle" class="btn btn-small" onclick="toggleMusic()">🎵 موسیقی: روشن</button>
+                    <button id="restartBtn" class="btn btn-small" onclick="restartGame()">🔄 شروع دوباره</button>
+                </div>
+            </div>
+        </section>
+    </main>
 </div>
 
-<!-- موسیقی پس‌زمینه (فقط با کلیک کاربر فعال می‌شود) -->
+<!-- موسیقی پس‌زمینه (آرام و آموزشی، فقط بعد از شروع بازی) -->
 <audio id="bgMusic" loop>
     <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3b0c9f4c3b.mp3?filename=happy-kids-110997.mp3" type="audio/mpeg">
 </audio>
@@ -329,20 +350,10 @@
 </audio>
 
 <script>
-    // وضعیت بازی
-    let gameState = {
-        score: 0,
-        level: 1,
-        character: null,
-        currentRoom: null,
-        roomsCompleted: {
-            light: false,
-            mix: false,
-            plant: false,
-            magnet: false
-        }
-    };
-
+    let playerName = "";
+    let characterName = "";
+    let score = 0;
+    let currentRoom = null;
     let currentQuestions = [];
     let currentIndex = 0;
     let answeredThisQuestion = false;
@@ -352,13 +363,12 @@
     const correctSound = document.getElementById('correctSound');
     const wrongSound = document.getElementById('wrongSound');
 
-    // تعریف سؤال‌ها با توضیح علمی
     const roomsData = {
         light: {
             title: "اتاق نور و سایه‌ها 💡",
             questions: [
                 {
-                    text: "در یک آزمایش، یک کتاب و یک مداد را در فاصله یکسان از چراغ قرار می‌دهیم. کدام جسم سایه بزرگ‌تری دارد؟",
+                    text: "در یک آزمایش، یک کتاب و یک مداد را در فاصله یکسان از چراغ و پرده قرار می‌دهیم. کدام جسم سایه بزرگ‌تری دارد؟",
                     options: [
                         { text: "کتاب", correct: true, explanation: "کتاب سطح بزرگ‌تری دارد، پس وقتی فاصله از چراغ و پرده ثابت باشد، سایه‌اش بزرگ‌تر است." },
                         { text: "مداد", correct: false, explanation: "مداد باریک است و سطح کمی دارد، بنابراین سایه‌اش کوچک‌تر از کتاب است." },
@@ -436,98 +446,47 @@
         }
     };
 
-    // بازیابی از localStorage
-    window.onload = function() {
-        const saved = localStorage.getItem('proScienceGame');
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                if (parsed && typeof parsed === 'object') {
-                    gameState = parsed;
-                    document.getElementById('savedInfo').innerText =
-                        "پیشرفت ذخیره‌شده: امتیاز " + gameState.score + " ⭐ | مرحله " + gameState.level;
-                }
-            } catch (e) {}
+    function startGame() {
+        const nameInput = document.getElementById('playerName').value.trim();
+        const charInput = document.getElementById('characterSelectInput').value;
+
+        if (!nameInput) {
+            alert("لطفاً نام خودت را بنویس تا بازی تو را بشناسد 🙂");
+            return;
         }
-    };
 
-    function saveState() {
-        localStorage.setItem('proScienceGame', JSON.stringify(gameState));
-    }
+        playerName = nameInput;
+        characterName = charInput;
+        score = 0;
 
-    function selectCharacter(name) {
-        gameState.character = name;
-        document.getElementById('statusChar').innerText = name;
-        document.getElementById('characterSelect').style.display = 'none';
-        document.getElementById('statusBar').style.display = 'flex';
-        document.getElementById('rooms').style.display = 'flex';
-        document.getElementById('gameArea').style.display = 'block';
-        updateStatus();
-        updateRoomBadges();
-        document.getElementById('roomTitle').innerHTML = "<h3>یک اتاق انتخاب کن تا آزمایش‌ها شروع شوند 🔬</h3>";
-    }
+        document.getElementById('statusName').innerText = playerName;
+        document.getElementById('statusChar').innerText = characterName;
+        document.getElementById('statusScore').innerText = score;
 
-    function updateStatus() {
-        document.getElementById('statusScore').innerText = gameState.score;
-        document.getElementById('statusLevel').innerText = gameState.level;
-        saveState();
-    }
+        document.getElementById('introScreen').style.display = "none";
+        document.getElementById('gameScreen').style.display = "block";
 
-    function updateRoomBadges() {
-        // نور همیشه باز است
-        setBadge('light', gameState.roomsCompleted.light ? 'done' : 'open');
-        setBadge('mix', gameState.roomsCompleted.mix ? 'done' : (gameState.roomsCompleted.light ? 'open' : 'locked'));
-        setBadge('plant', gameState.roomsCompleted.plant ? 'done' : (gameState.roomsCompleted.mix ? 'open' : 'locked'));
-        setBadge('magnet', gameState.roomsCompleted.magnet ? 'done' : (gameState.roomsCompleted.plant ? 'open' : 'locked'));
-    }
+        // موسیقی را بعد از شروع بازی فعال می‌کنیم
+        musicOn = true;
+        toggleMusic(true);
 
-    function setBadge(room, state) {
-        const badge = document.getElementById('badge-' + room);
-        badge.classList.remove('room-open', 'room-locked', 'room-done');
-        if (state === 'open') {
-            badge.classList.add('room-open');
-            badge.innerText = 'باز';
-        } else if (state === 'locked') {
-            badge.classList.add('room-locked');
-            badge.innerText = 'قفل';
-        } else if (state === 'done') {
-            badge.classList.add('room-done');
-            badge.innerText = 'تکمیل شده';
-        }
+        document.getElementById('roomTitle').innerText = "یک اتاق انتخاب کن تا آزمایش‌ها شروع شوند 🔬";
+        document.getElementById('questionBox').innerText = "";
+        document.getElementById('answersBox').innerHTML = "";
+        document.getElementById('message').innerText = "";
+        document.getElementById('explanation').innerText = "";
+        document.getElementById('finalTitle').innerText = "";
     }
 
     function enterRoom(roomKey) {
-        // بررسی ترتیب منطقی
-        if (roomKey === 'mix' && !gameState.roomsCompleted.light) {
-            showMessage("برای ورود به اتاق مخلوط‌ها، باید اول اتاق نور را کامل کنی 💡");
-            playWrong();
-            return;
-        }
-        if (roomKey === 'plant' && !gameState.roomsCompleted.mix) {
-            showMessage("برای ورود به اتاق گیاهان، باید اتاق مخلوط‌ها را کامل کنی 🧂");
-            playWrong();
-            return;
-        }
-        if (roomKey === 'magnet' && !gameState.roomsCompleted.plant) {
-            showMessage("برای ورود به اتاق آهن‌ربا، باید اتاق گیاهان را کامل کنی 🌱");
-            playWrong();
-            return;
-        }
-
-        gameState.currentRoom = roomKey;
+        currentRoom = roomKey;
         currentQuestions = roomsData[roomKey].questions;
         currentIndex = 0;
         answeredThisQuestion = false;
-        document.getElementById('finalTitle').innerHTML = "";
-        showRoom();
-        showQuestion();
-    }
 
-    function showRoom() {
-        const roomKey = gameState.currentRoom;
-        document.getElementById('roomTitle').innerHTML = "<h3>" + roomsData[roomKey].title + "</h3>";
-        document.getElementById('message').innerHTML = "";
-        document.getElementById('explanation').innerHTML = "";
+        document.getElementById('roomTitle').innerText = roomsData[roomKey].title;
+        document.getElementById('finalTitle').innerText = "";
+        showQuestion();
     }
 
     function showQuestion() {
@@ -535,12 +494,14 @@
         document.getElementById('questionBox').innerText = q.text;
         const answersBox = document.getElementById('answersBox');
         answersBox.innerHTML = "";
-        answeredThisQuestion = false;
+        document.getElementById('message').innerText = "";
+        document.getElementById('explanation').innerText = "";
         document.getElementById('nextBtn').style.display = "none";
+        answeredThisQuestion = false;
 
         q.options.forEach((opt, idx) => {
             const btn = document.createElement('button');
-            btn.className = 'answer-btn';
+            btn.className = "answer-btn";
             btn.innerText = opt.text;
             btn.onclick = () => handleAnswer(idx);
             answersBox.appendChild(btn);
@@ -552,29 +513,28 @@
         const opt = q.options[optionIndex];
 
         if (answeredThisQuestion) {
-            // جلوگیری از امتیازگیری تکراری
-            showMessage("برای این سؤال قبلاً پاسخ داده‌ای؛ امتیاز جدیدی نمی‌گیری 🙂");
+            document.getElementById('message').innerText = "برای این سؤال قبلاً پاسخ داده‌ای؛ امتیاز جدیدی نمی‌گیری 🙂";
             return;
         }
 
         answeredThisQuestion = true;
 
         if (opt.correct) {
-            gameState.score += 10;
-            gameState.level++;
-            updateStatus();
-            showMessage("آفرین! پاسخ درست بود 🌟");
+            score += 10;
+            document.getElementById('statusScore').innerText = score;
+            document.getElementById('message').innerText = "آفرین " + playerName + "! پاسخ درست بود 🌟";
             playCorrect();
         } else {
-            showMessage("این پاسخ درست نیست، ولی توضیح علمی را بخوان 🙂");
+            document.getElementById('message').innerText = "این پاسخ درست نیست، ولی توضیح علمی را بخوان 🙂";
             playWrong();
         }
 
         document.getElementById('explanation').innerText = "🧠 توضیح علمی: " + opt.explanation;
 
-        // اگر سؤال آخر این اتاق است
         if (currentIndex === currentQuestions.length - 1) {
-            completeRoom(gameState.currentRoom);
+            document.getElementById('nextBtn').style.display = "none";
+            document.getElementById('finalTitle').innerText =
+                "✅ این اتاق را کامل کردی، " + playerName + "! می‌توانی اتاق دیگری را انتخاب کنی.";
         } else {
             document.getElementById('nextBtn').style.display = "inline-block";
         }
@@ -582,45 +542,27 @@
 
     function nextQuestion() {
         if (!answeredThisQuestion) {
-            showMessage("اول به سؤال فعلی پاسخ بده، بعد برو سؤال بعدی 🙂");
+            document.getElementById('message').innerText = "اول به سؤال فعلی پاسخ بده، بعد برو سؤال بعدی 🙂";
             return;
         }
         currentIndex++;
         showQuestion();
-        document.getElementById('message').innerHTML = "";
-        document.getElementById('explanation').innerHTML = "";
     }
 
-    function completeRoom(roomKey) {
-        gameState.roomsCompleted[roomKey] = true;
-        updateRoomBadges();
-        saveState();
-
-        if (roomKey === 'magnet') {
-            document.getElementById('finalTitle').innerHTML =
-                "🎉 تبریک! تو همه‌ی آزمایشگاه‌ها را کامل کردی و عنوان «دانشمند کوچک سال» را به دست آوردی! 🎓";
+    function toggleMusic(forceOn) {
+        if (typeof forceOn === "boolean") {
+            musicOn = forceOn;
         } else {
-            let nextRoomName = "";
-            if (roomKey === 'light') nextRoomName = "اتاق مخلوط‌ها 🧂";
-            if (roomKey === 'mix') nextRoomName = "اتاق گیاهان 🌱";
-            if (roomKey === 'plant') nextRoomName = "اتاق آهن‌ربا 🧲";
-
-            document.getElementById('finalTitle').innerHTML =
-                "✅ این اتاق را کامل کردی! حالا می‌توانی به " + nextRoomName + " بروی.";
+            musicOn = !musicOn;
         }
-    }
 
-    function showMessage(msg) {
-        document.getElementById('message').innerText = msg;
-    }
-
-    function toggleMusic() {
-        musicOn = !musicOn;
         const btn = document.getElementById('musicToggle');
         if (musicOn) {
             btn.innerText = "🎵 موسیقی: روشن";
-            bgMusic.volume = 0.4;
-            bgMusic.play().catch(() => {});
+            try {
+                bgMusic.volume = 0.4;
+                bgMusic.play().catch(() => {});
+            } catch (e) {}
         } else {
             btn.innerText = "🎵 موسیقی: خاموش";
             bgMusic.pause();
@@ -636,30 +578,29 @@
     }
 
     function restartGame() {
-        if (!confirm("آیا مطمئن هستی می‌خواهی بازی را از اول شروع کنی؟ امتیاز و پیشرفت پاک می‌شود.")) {
+        if (!confirm("آیا مطمئن هستی می‌خواهی بازی را از اول شروع کنی؟")) {
             return;
         }
-        gameState = {
-            score: 0,
-            level: 1,
-            character: null,
-            currentRoom: null,
-            roomsCompleted: {
-                light: false,
-                mix: false,
-                plant: false,
-                magnet: false
-            }
-        };
-        saveState();
-        document.getElementById('statusBar').style.display = 'none';
-        document.getElementById('rooms').style.display = 'none';
-        document.getElementById('gameArea').style.display = 'none';
-        document.getElementById('characterSelect').style.display = 'block';
-        document.getElementById('savedInfo').innerText = "";
-        document.getElementById('finalTitle').innerHTML = "";
-        document.getElementById('message').innerHTML = "";
-        document.getElementById('explanation').innerHTML = "";
+        playerName = "";
+        characterName = "";
+        score = 0;
+        currentRoom = null;
+        currentQuestions = [];
+        currentIndex = 0;
+        answeredThisQuestion = false;
+
+        bgMusic.pause();
+        musicOn = false;
+        document.getElementById('musicToggle').innerText = "🎵 موسیقی: خاموش";
+
+        document.getElementById('introScreen').style.display = "flex";
+        document.getElementById('gameScreen').style.display = "none";
+        document.getElementById('playerName').value = "";
+        document.getElementById('questionBox').innerText = "";
+        document.getElementById('answersBox').innerHTML = "";
+        document.getElementById('message').innerText = "";
+        document.getElementById('explanation').innerText = "";
+        document.getElementById('finalTitle').innerText = "";
     }
 </script>
 
